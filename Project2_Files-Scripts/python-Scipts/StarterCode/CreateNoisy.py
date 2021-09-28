@@ -30,8 +30,17 @@ def noiseAddtion(image,noiseIndicator):
     ## This function should return a noisy version of the input image
     
     ##  ***************** Your Code starts here ***************** ##
-    
-    raise NotImplementedError
+
+    if( noiseIndicator == 0 ):
+      noisy = ski.util.random_noise(image, mode='gaussian', seed=None, mean=0, var=0.08)
+    elif noiseIndicator == 1 :
+      noisy = ski.util.random_noise(image, mode='s&p', seed=None, amount=0.08)
+    elif noiseIndicator == 2 :
+      noisy = ski.util.random_noise(image, mode='poisson', seed=None)
+    elif noiseIndicator == 3 :
+      noisy = ski.util.random_noise(image, mode='speckle', seed=None, mean=0, var=0.05)
+    else:
+        print('Something went wrong with NoiseIndicator\n')
     
     ## ***************** Your Code ends here ***************** ##
     return noisy
