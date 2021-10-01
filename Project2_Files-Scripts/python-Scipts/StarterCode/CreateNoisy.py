@@ -73,8 +73,13 @@ def main(train, numberOfSamples,noisyIndicatorLow,noisyIndicatorHigh):
         maximumPixelValue = np.max(image)
         image = image/maximumPixelValue  
         
-        # Choosing the noise randomly 
-        r1 = random.randint(2,3)
+        # Choosing the noise randomly
+
+        #Original Code
+        #r1 = random.randint(2,3)
+        
+        #Revised Code
+        r1 = random.randint(noisyIndicatorLow,noisyIndicatorHigh)
         noisyImage = noiseAddtion(image,r1)
         Trainingdictlist[i]={'RefImageName':img_name,'NoiseType': r1,'NoisyImage':str(i)+'.png'}
         io.imsave(directoryName+str(i)+'.png',noisyImage)
