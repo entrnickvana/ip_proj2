@@ -11,7 +11,8 @@ from utils import NoiseDatsetLoader
 
 dtype = torch.float32
 #you can change this to "cuda" to run your code on GPU
-cpu = torch.device('cpu')
+#cpu = torch.device('cpu')
+cpu = torch.device('cuda')
 
 
 def checkTestingAccuracy(dataloader,model):
@@ -29,11 +30,10 @@ def checkTestingAccuracy(dataloader,model):
         ## For Each Test Image Calculate the MSE loss with respect to Reference Image 
         ## Return the mean the total loss on the whole Testing Dataset
         ## ************* Start of your Code *********************** ##
-        
 
-        raise NotImplementedError
-        
+        totalLoss.append(loss_mse(NoisyImage, referenceImage))
 
+    return np.mean(totalLoss)
         ## ************ End of your code ********************   ##
 
 
@@ -65,9 +65,23 @@ def trainingLoop(dataloader,model,optimizer,nepochs):
                 ## Due to dataset being Gray you may have to use unsqueeze function here
 
                 ## ************* Start of your Code *********************** ##
+                ## Pass your input images through the model
+                
+                output = model(NoisyImage)
 
-                raise NotImplementedError
-
+                ## Be sure to set the gradient as Zero in Optmizer before backward pass. Hint:- zero_grad()
+                optimizer.zero_grad()
+                
+                ## Step the otimizer after backward pass
+                MSE_loss = loss_function(output, referenceImage)
+                MSE_loss.backward()
+                optimizer.step()
+                
+                ## calcualte the loss value using the ground truth and the output image                                
+                
+                ## Assign the value computed by the loss function to a varible named 'loss'
+                loss = loss_function(output, referenceImage)
+                
                 ## ************ End of your code ********************   ##
                 loss_array.append(loss.cpu().detach().numpy())
             print("Training loss: ",loss)
@@ -96,9 +110,8 @@ def main():
 
     ## ************* Start of your Code *********************** ##
 
-    #arbitrary comment
-    raise NotImplementedError
-    model =    
+    # Model: 1 input channel to 1 output channel, kernel size 5 x 5 with padding of 2
+    model = torch.nn.Sequential(torch.nn.Conv2d(1, 1, kernel_size=(5,5)), padding=2)
 
     ## ************ End of your code ********************   ##
    
@@ -108,13 +121,12 @@ def main():
     ## Please Declare An Optimizer for your model. We suggest you use SGD
     ## ************* Start of your Code *********************** ##
 
-    raise NotImplementedError
-    learning_rate =
+    learning_rate = 1e-3 
 
-    weight_decay  = 
-    epochs        =   
+    weight_decay  = 1e-3
+    epochs        = 10  
 
-    optimizer     = 
+    optimizer     = torch.optim.SGD(model.parameters(), lr=learning, momentum=0.9, weight_decay=weight_decay)
     
     ## ************ End of your code ********************   ##
 
@@ -130,15 +142,19 @@ def main():
 
     ## Plot graph of loss vs epoch
     ## ************* Start of your Code *********************** ##
-
-    raise NotImplementedError
+    plt.plot(epochs, valMSE)
+    plt.show()
+    
+        
+    
+    #raise NotImplementedError
 
     ## ************ End of your code ********************   ##
     
     ## Plot some of the Testing Dataset images by passing them through the trained model
     ## ************* Start of your Code *********************** ##
 
-    raise NotImplementedError    
+    #raise NotImplementedError    
 
     ## ************ End of your code ********************   ##
 
