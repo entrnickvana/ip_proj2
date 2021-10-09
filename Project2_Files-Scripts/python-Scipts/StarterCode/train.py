@@ -3,16 +3,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch.nn as nn
 import torch.optim as optim
-
+from torch.utils.data import DataLoader
 import time
-import sys 
+import sys
+import os
+import code
 sys.path.append("../../utils")
 from utils import NoiseDatsetLoader
 
 dtype = torch.float32
 #you can change this to "cuda" to run your code on GPU
-#cpu = torch.device('cpu')
-cpu = torch.device('cuda')
+cpu = torch.device('cpu')
+#cpu = torch.device('cuda')
 
 
 def checkTestingAccuracy(dataloader,model):
@@ -111,7 +113,8 @@ def main():
     ## ************* Start of your Code *********************** ##
 
     # Model: 1 input channel to 1 output channel, kernel size 5 x 5 with padding of 2
-    model = torch.nn.Sequential(torch.nn.Conv2d(1, 1, kernel_size=(5,5)), padding=2)
+    model = torch.nn.Sequential(torch.nn.Conv2d(1,2,kernel_size=(5,5),padding=2)) #28x28    
+    #model = torch.nn.Sequential(torch.nn.Conv2d(1, 1, kernel_size=(5,5)), padding=2)
 
     ## ************ End of your code ********************   ##
    
@@ -126,7 +129,7 @@ def main():
     weight_decay  = 1e-3
     epochs        = 10  
 
-    optimizer     = torch.optim.SGD(model.parameters(), lr=learning, momentum=0.9, weight_decay=weight_decay)
+    optimizer     = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9, weight_decay=weight_decay)
     
     ## ************ End of your code ********************   ##
 
@@ -140,12 +143,13 @@ def main():
     
     model.eval() # Put you model in Eval Mode
 
+    code.interact(local=locals())
+
     ## Plot graph of loss vs epoch
     ## ************* Start of your Code *********************** ##
     plt.plot(epochs, valMSE)
     plt.show()
     
-        
     
     #raise NotImplementedError
 
