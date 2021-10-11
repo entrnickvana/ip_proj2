@@ -115,17 +115,21 @@ def main():
     ## ************* Start of your Code *********************** ##
 
     # Model: 1 input channel to 1 output channel, kernel size 5 x 5 with padding of 2
-    model = torch.nn.Sequential(torch.nn.Conv2d( 1, 1, kernel_size=(5,5), padding=2)) #28x28
+    #model = torch.nn.Sequential(torch.nn.Conv2d( 1, 1, kernel_size=(5,5), padding=2)) #28x28
 
     ## Model 2:-  Declare a model with five conv2d filters, with input channel size of first filter as 1 and output channel size of last filter as 1.
     ##            All other intermediate channels you can change as you see fit( use a maximum of 8 or 16 channel inbetween layers, otherwise the model might take a huge amount of time to train).
     ##            Add batchnorm2d layers between each convolution layer for faster convergence.
-    #model = torch.nn.Sequential(torch.nn.Conv2d( 1, 1, kernel_size=(5,5), padding=2),
-    #                            torch.nn.Conv2d( 1, 2, kernel_size=(3,3), padding=1),
-    #                            torch.nn.Conv2d( 2, 4, kernel_size=(3,3), padding=1),
-    #                            torch.nn.Conv2d( 4, 2, kernel_size=(3,3), padding=1),
-    #                            torch.nn.Conv2d( 2, 1, kernel_size=(3,3), padding=1)                                                                
-    #                            ) #28x28
+    model = torch.nn.Sequential(torch.nn.Conv2d( 1, 1, kernel_size=(5,5), padding=2),
+                                torch.nn.BatchNorm2d(1),
+                                torch.nn.Conv2d( 1, 2, kernel_size=(3,3), padding=1),
+                                torch.nn.BatchNorm2d(2),                                
+                                torch.nn.Conv2d( 2, 4, kernel_size=(3,3), padding=1),
+                                torch.nn.BatchNorm2d(4),                                                                
+                                torch.nn.Conv2d( 4, 2, kernel_size=(3,3), padding=1),
+                                torch.nn.BatchNorm2d(2),                                                                                                
+                                torch.nn.Conv2d( 2, 1, kernel_size=(3,3), padding=1)                                                                
+                                ) #28x28
 
     ## Model 3:-  Add Non Linear activation in between convolution layers from Model 2
     
