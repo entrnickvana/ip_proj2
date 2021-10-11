@@ -71,88 +71,23 @@ def trainingLoop(dataloader,model,optimizer,nepochs):
 
                 ## ************* Start of your Code *********************** ##
                 ## Pass your input images through the model
-                #NoisyImage = torch.unsqueeze(NoisyImage, 1)
-                #referenceImage = torch.unsqueeze(referenceImage, 1)
-                
                 output = model(NoisyImage) #Forward Pass
-                
-                #t0 = referenceImage.detach().numpy()[0][0]
-                #t1 = referenceImage.detach().numpy()[1][0]                
-                #t2 = referenceImage.detach().numpy()[2][0]                
-                #t3 = referenceImage.detach().numpy()[3][0]
-                #
-                #n0 = NoisyImage.detach().numpy()[0][0]
-                #n1 = NoisyImage.detach().numpy()[1][0]                
-                #n2 = NoisyImage.detach().numpy()[2][0]                
-                #n3 = NoisyImage.detach().numpy()[3][0]
-                #
-                #out0 = output.detach().numpy()[0][0]
-                #out1 = output.detach().numpy()[1][0]
-                #out2 = output.detach().numpy()[2][0]
-                #out3 = output.detach().numpy()[3][0]
-                #
-                ##d0 = np.subtract(t0, out0)
-                ##d1 = np.subtract(t1, out1)
-                ##d2 = np.subtract(t2, out2)
-                ##d3 = np.subtract(t3, out3)
-                #
-                #d0 = t0 - out0
-                #d1 = t1 - out1
-                #d2 = t2 - out2
-                #d3 = t3 - out3
-                #
-                #dsqr_0 = np.square(d0)
-                #dsqr_1 = np.square(d1)
-                #dsqr_2 = np.square(d2)
-                #dsqr_3 = np.square(d3)
-                #
-                #print("d0--------------------------\n", d0)
-                #print("d1--------------------------\n", d1)
-                #print("d2--------------------------\n", d2)
-                #print("d3--------------------------\n", d3)
-                #
-                #plt.subplot(441)
-                #plt.imshow(NoisyImage.detach().numpy()[0][0], cmap='gray')
-                #plt.subplot(442)
-                #plt.imshow(referenceImage.detach().numpy()[0][0], cmap='gray')
-                #plt.subplot(443)                
-                #plt.imshow(output.detach().numpy()[0][0], cmap='gray')
-                #
-                #print('weight before: \n', model[0].weight)
-                #print('Grad weight before: \n', model[0].weight.grad)                           
-                ### Be sure to set the gradient as Zero in Optmizer before backward pass. Hint:- zero_grad()
-                #
-                #print('after opt: \n', model[0].weight)
-                #print('Grad after opt: \n', model[0].weight.grad)                           
-                
+                                
                 ## Step the otimizer after backward pass
                 MSE_loss = loss_function(output, referenceImage) #Calculate loss
-                #debugprint('after mse calc: \n', model[0].weight)
-                #debugprint('Grad mse calc: \n', model[0].weight.grad)                           
                 optimizer.zero_grad()  # Set gradient to zero
                            
                 MSE_loss.backward() #Perform backward pass
-                #debugprint('after mse_backward: \n', model[0].weight)
-                #debugprint('Grad mse_backward: \n', model[0].weight.grad)                           
                            
                 optimizer.step()  # Optimizer step
-                #debugprint('after opt step: \n', model[0].weight)
-                #debugprint('Grad opt step: \n', model[0].weight.grad)
-                #plt.show()                
-                           
-                ## calcualte the loss value using the ground truth and the output image                                
                 
                 ## Assign the value computed by the loss function to a varible named 'loss'
-                #loss = loss_function(output, referenceImage)
                 loss = MSE_loss
-
-                #code.interact(local=locals())                
                 
                 ## ************ End of your code ********************   ##
                 loss_array.append(loss.cpu().detach().numpy())
-                print("t: ", t, "Loss: ", loss.cpu().detach().numpy())
             print("Training loss: ",loss)
-    code.interact(local=locals())
+    loss = loss_array
     return loss
 
 
@@ -180,7 +115,20 @@ def main():
     ## ************* Start of your Code *********************** ##
 
     # Model: 1 input channel to 1 output channel, kernel size 5 x 5 with padding of 2
-    model = torch.nn.Sequential(torch.nn.Conv2d( 1, 1, kernel_size=(5,5), padding=2)) #28x28    
+    model = torch.nn.Sequential(torch.nn.Conv2d( 1, 1, kernel_size=(5,5), padding=2)) #28x28
+
+    ## Model 2:-  Declare a model with five conv2d filters, with input channel size of first filter as 1 and output channel size of last filter as 1.
+    ##            All other intermediate channels you can change as you see fit( use a maximum of 8 or 16 channel inbetween layers, otherwise the model might take a huge amount of time to train).
+    ##            Add batchnorm2d layers between each convolution layer for faster convergence.
+    #model = torch.nn.Sequential(torch.nn.Conv2d( 1, 1, kernel_size=(5,5), padding=2),
+    #                            torch.nn.Conv2d( 1, 2, kernel_size=(3,3), padding=1),
+    #                            torch.nn.Conv2d( 2, 4, kernel_size=(3,3), padding=1),
+    #                            torch.nn.Conv2d( 4, 2, kernel_size=(3,3), padding=1),
+    #                            torch.nn.Conv2d( 2, 1, kernel_size=(3,3), padding=1)                                                                
+    #                            ) #28x28
+
+    ## Model 3:-  Add Non Linear activation in between convolution layers from Model 2
+    
     #model = torch.nn.Sequential(torch.nn.Conv2d(1, 1, kernel_size=(5,5)), padding=2)
 
     ## ************ End of your code ********************   ##
@@ -212,8 +160,9 @@ def main():
 
     ## Plot graph of loss vs epoch
     ## ************* Start of your Code *********************** ##
-    plt.plot(epochs, valMSE)
+    plt.plot(np.arange(len(valMSE)), valMSE)
     plt.show()
+
     
     
     #raise NotImplementedError
@@ -222,8 +171,63 @@ def main():
     
     ## Plot some of the Testing Dataset images by passing them through the trained model
     ## ************* Start of your Code *********************** ##
-
-    #raise NotImplementedError    
+    model_type = 0
+    if(model_type == 0):
+      
+      dataloader_inspect  = DataLoader(TrainingSet,batch_size=batch_size,num_workers=0)    
+      code.interact(local=locals())
+      
+      for t, temp in enumerate(dataloader_inspect):
+        NoisyImage = temp['NoisyImage'].to(device=cpu,dtype=dtype)
+        referenceImage = temp['image'].to(device=cpu,dtype=dtype)      
+        output = model(NoisyImage)
+      
+        r0 = referenceImage.detach().numpy()[0][0]
+        r1 = referenceImage.detach().numpy()[1][0]
+        r2 = referenceImage.detach().numpy()[2][0]
+        r3 = referenceImage.detach().numpy()[3][0]
+        
+        n0 = NoisyImage.detach().numpy()[0][0]
+        n1 = NoisyImage.detach().numpy()[1][0]
+        n2 = NoisyImage.detach().numpy()[2][0]
+        n3 = NoisyImage.detach().numpy()[3][0]
+        
+        out0 = output.detach().numpy()[0][0]
+        out1 = output.detach().numpy()[1][0]
+        out2 = output.detach().numpy()[2][0]
+        out3 = output.detach().numpy()[3][0]
+      
+        plt.subplot(4,3,1)
+        plt.imshow(n0, cmap='gray')
+        plt.subplot(4,3,2)
+        plt.imshow(out0, cmap='gray')
+        plt.subplot(4,3,3)
+        plt.imshow(r0, cmap='gray')
+      
+        plt.subplot(4,3,4)
+        plt.imshow(n1, cmap='gray')
+        plt.subplot(4,3,5)
+        plt.imshow(out1, cmap='gray')
+        plt.subplot(4,3,6)
+        plt.imshow(r1, cmap='gray')
+      
+        plt.subplot(4,3,7)
+        plt.imshow(n2, cmap='gray')
+        plt.subplot(4,3,8)
+        plt.imshow(out2, cmap='gray')
+        plt.subplot(4,3,9)
+        plt.imshow(r2, cmap='gray')
+      
+        plt.subplot(4,3,10)
+        plt.imshow(n3, cmap='gray')
+        plt.subplot(4,3,11)
+        plt.imshow(out3, cmap='gray')
+        plt.subplot(4,3,12)
+        plt.imshow(r3, cmap='gray')
+        
+        plt.show()
+          
+        code.interact(local=locals())        
 
     ## ************ End of your code ********************   ##
 
