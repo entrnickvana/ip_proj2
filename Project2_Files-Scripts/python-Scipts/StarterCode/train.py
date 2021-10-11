@@ -121,13 +121,13 @@ def main():
     ##            All other intermediate channels you can change as you see fit( use a maximum of 8 or 16 channel inbetween layers, otherwise the model might take a huge amount of time to train).
     ##            Add batchnorm2d layers between each convolution layer for faster convergence.
     model = torch.nn.Sequential(torch.nn.Conv2d( 1, 1, kernel_size=(5,5), padding=2),
-                                #torch.nn.BatchNorm2d(1),
+                                torch.nn.BatchNorm2d(1),
                                 torch.nn.Conv2d( 1, 2, kernel_size=(3,3), padding=1),
-                                #torch.nn.BatchNorm2d(2),                                
+                                torch.nn.BatchNorm2d(2),                                
                                 torch.nn.Conv2d( 2, 2, kernel_size=(3,3), padding=1),
-                                #torch.nn.BatchNorm2d(4),                                                                
+                                torch.nn.BatchNorm2d(2),                                                                
                                 torch.nn.Conv2d( 2, 2, kernel_size=(3,3), padding=1),
-                                #torch.nn.BatchNorm2d(2),                                                                                                
+                                torch.nn.BatchNorm2d(2),                                                                                                
                                 torch.nn.Conv2d( 2, 1, kernel_size=(3,3), padding=1)                                                                
                                 ) #28x28
 
