@@ -127,12 +127,16 @@ ducati_gray = color2grey(ducati)
 poke0 = io.imread('../my_images/0.png')
 poke1 = io.imread('../my_images/1.png')
 
+
+
+
 #plt.imshow(circ_msk(3), cmap='gray')
 #plt.show()
 #exit()
 
 # Creating gaussian/normal noise
 mu = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+var_arr = np.arange(0, 0.2*9, 0.2)
 norm_noise_scale = 10
 sgm = np.arange(0, norm_noise_scale*9, norm_noise_scale)
 cam_noises = norm_arr(camera_gray, mu, sgm)
@@ -154,19 +158,20 @@ mu = [0, 0, 0, 0, 0, 0, 0, 0, 0]
 norm_noise_scale = 10
 sgm = np.arange(0, norm_noise_scale*9, norm_noise_scale)
 cam_noises = norm_arr(camera_gray, mu, sgm)
-#hist_arr = []
-#for jj in range(len(cam_noises)):
-#  hist_arr.append(cam_noises[jj])
-#  hist_arr.append(np.histogram(cam_noises[jj], 512)[0])
-#
-#fig1, axis = plt.subplots(2*3,3)
-#axis = axis.ravel()
-#for ii in range(0, len(hist_arr), 2):
-#  axis[ii].imshow(hist_arr[ii], cmap='gray')
-#  axis[ii+1].plot(hist_arr[ii+1])
-#  axis[ii+1].set_title('hist')
-#plt.show()
-#plt.savefig('Norm_noise_with_hist')
+#cam_noises = gamma_arr(camera_gray, mu, sgm)
+hist_arr = []
+for jj in range(len(cam_noises)):
+  hist_arr.append(cam_noises[jj])
+  hist_arr.append(np.histogram(cam_noises[jj], 512)[0])
+
+fig1, axis = plt.subplots(2*3,3)
+axis = axis.ravel()
+for ii in range(0, len(hist_arr), 2):
+  axis[ii].imshow(hist_arr[ii], cmap='gray')
+  axis[ii+1].plot(hist_arr[ii+1])
+  axis[ii+1].set_title('hist')
+plt.show()
+plt.savefig('Norm_noise_with_hist')
 
 
 cNoise = cam_noises[2]/cam_noises[2].max()  
@@ -325,7 +330,7 @@ mu = [0, 0, 0, 0, 0, 0, 0, 0, 0]
 norm_noise_scale = 10
 sgm = np.arange(0, norm_noise_scale*9, norm_noise_scale)
 cam_noises = norm_arr(camera_gray, mu, sgm)
-#hist_arr = []
+hist_arr = []
 #for jj in range(len(cam_noises)):
 #  hist_arr.append(cam_noises[jj])
 #  hist_arr.append(np.histogram(cam_noises[jj], 512)[0])
@@ -410,20 +415,20 @@ mu = [0, 0, 0, 0, 0, 0, 0, 0, 0]
 norm_noise_scale = 10
 sgm = np.arange(0, norm_noise_scale*9, norm_noise_scale)
 cam_noises = norm_arr(camera_gray, mu, sgm)
-#hist_arr = []
-#for jj in range(len(cam_noises)):
-#  hist_arr.append(cam_noises[jj])
-#  hist_arr.append(np.histogram(cam_noises[jj], 512)[0])
-#
-#fig2, axis = plt.subplots(2*3,3)
-#axis = axis.ravel()
-#for ii in range(0, len(hist_arr), 2):
-#  axis[ii].imshow(hist_arr[ii], cmap='gray')
-#  axis[ii+1].plot(hist_arr[ii+1])
-#  axis[ii+1].set_title('hist')
-#
-#plt.show()
-#plt.savefig('Norm_noise_with_hist')
+hist_arr = []
+for jj in range(len(cam_noises)):
+  hist_arr.append(cam_noises[jj])
+  hist_arr.append(np.histogram(cam_noises[jj], 512)[0])
+
+fig2, axis = plt.subplots(2*3,3)
+axis = axis.ravel()
+for ii in range(0, len(hist_arr), 2):
+  axis[ii].imshow(hist_arr[ii], cmap='gray')
+  axis[ii+1].plot(hist_arr[ii+1])
+  axis[ii+1].set_title('hist')
+
+plt.show()
+plt.savefig('Norm_noise_with_hist')
 
 cNoise = cam_noises[2]/cam_noises[2].max()  
 c3  = filters.rank.median(cam_noises[2]/cam_noises[2].max(), np.ones((3 ,3 )))  
