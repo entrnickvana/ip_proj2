@@ -61,7 +61,7 @@ def trainingLoop(dataloader,model,optimizer,nepochs):
                 model.train()   
                 NoisyImage = temp['NoisyImage'].to(device=cpu,dtype=dtype)
                 referenceImage = temp['image'].to(device=cpu,dtype=dtype)
-                ## Pass your input images through the model
+                 ## Pass your input images through the model
                 ## Be sure to set the gradient as Zero in Optmizer before backward pass. Hint:- zero_grad()
                 ## Step the otimizer on after backward pass
                 ## calcualte the loss value using the ground truth and the output image
@@ -87,6 +87,26 @@ def trainingLoop(dataloader,model,optimizer,nepochs):
                 ## ************ End of your code ********************   ##
                 loss_array.append(loss.cpu().detach().numpy())
             print("Training loss: ",loss)
+            plt.subplot(3,3,1)
+            plt.imshow(NoisyImage.detach().numpy()[0][0], cmap='gray')
+            plt.subplot(3,3,2)            
+            plt.imshow(output.detach().numpy()[0][0], cmap='gray')
+            plt.subplot(3,3,3)            
+            plt.imshow(referenceImage.detach().numpy()[1][0], cmap='gray') 
+            plt.subplot(3,3,4)
+            plt.imshow(NoisyImage.detach().numpy()[1][0], cmap='gray')
+            plt.subplot(3,3,5)            
+            plt.imshow(output.detach().numpy()[1][0], cmap='gray')
+            plt.subplot(3,3,6)            
+            plt.imshow(referenceImage.detach().numpy()[1][0], cmap='gray') 
+            plt.subplot(3,3,7)
+            plt.imshow(NoisyImage.detach().numpy()[2][0], cmap='gray')
+            plt.subplot(3,3,8)            
+            plt.imshow(output.detach().numpy()[2][0], cmap='gray')
+            plt.subplot(3,3,9)            
+            plt.imshow(referenceImage.detach().numpy()[2][0], cmap='gray') 
+            plt.show()            
+            
     loss = loss_array
     return loss
 
@@ -97,7 +117,7 @@ def main():
     TestingSet  = NoiseDatsetLoader(csv_file='TestingDataSet.csv' , root_dir_noisy='TestingDataset')
 
     ## Batch Size is a hyper parameter, You may need to play with this paramter to get a more better network
-    batch_size=16
+    batch_size=4
 
     ## DataLoader is a pytorch Class for iterating over a dataset
     #dataloader_train  = DataLoader(TrainingSet,batch_size=batch_size,num_workers=4)
@@ -120,18 +140,49 @@ def main():
     ## Model 2:-  Declare a model with five conv2d filters, with input channel size of first filter as 1 and output channel size of last filter as 1.
     ##            All other intermediate channels you can change as you see fit( use a maximum of 8 or 16 channel inbetween layers, otherwise the model might take a huge amount of time to train).
     ##            Add batchnorm2d layers between each convolution layer for faster convergence.
-    model = torch.nn.Sequential(torch.nn.Conv2d( 1, 1, kernel_size=(5,5), padding=2),
-                                #torch.nn.BatchNorm2d(1),
-                                torch.nn.Conv2d( 1, 2, kernel_size=(3,3), padding=1),
-                                #torch.nn.BatchNorm2d(2),                                
-                                torch.nn.Conv2d( 2, 2, kernel_size=(3,3), padding=1),
-                                #torch.nn.BatchNorm2d(2),                                                                
-                                torch.nn.Conv2d( 2, 2, kernel_size=(3,3), padding=1),
-                                #torch.nn.BatchNorm2d(2),                                                                                                
-                                torch.nn.Conv2d( 2, 1, kernel_size=(3,3), padding=1)                                                                
-                                ) #28x28
 
-    ## Model 3:-  Add Non Linear activation in between convolution layers from Model 2
+    # Best model, don't change
+    #model = torch.nn.Sequential(torch.nn.Conv2d( 1, 1, kernel_size=(5,5), padding=2),
+    #                            #torch.nn.BatchNorm2d(1),
+    #                            torch.nn.Conv2d( 1, 2, kernel_size=(3,3), padding=1),
+    #                            #torch.nn.BatchNorm2d(2),                                
+    #                            torch.nn.Conv2d( 2, 2, kernel_size=(3,3), padding=1),
+    #                            #torch.nn.BatchNorm2d(2),                                                                
+    #                            torch.nn.Conv2d( 2, 2, kernel_size=(3,3), padding=1),
+    #                            #torch.nn.BatchNorm2d(2),                                                                                                
+    #                            torch.nn.Conv2d( 2, 1, kernel_size=(3,3), padding=1)                                                                
+    #                            )
+
+    #model = torch.nn.Sequential(torch.nn.Conv2d( 1, 8, kernel_size=(5,5), padding=2),
+    #                            torch.nn.Conv2d( 8, 8, kernel_size=(3,3), padding=1),
+    #                            torch.nn.Conv2d( 8, 8, kernel_size=(3,3), padding=1),
+    #                            torch.nn.Conv2d( 8, 8, kernel_size=(3,3), padding=1),
+    #                            torch.nn.Conv2d( 8, 1, kernel_size=(3,3), padding=1)                                                                
+    #                            ) #28x28
+    
+    ### Model 3:-  Add Non Linear activation in between convolution layers from Model 2
+    ##Converges to about 950 in 20 epochs with batch size 64 and lr 1e-7, momentum9
+    #model = torch.nn.Sequential(torch.nn.Conv2d( 1, 8, kernel_size=(5,5), padding=2),
+    #                            torch.nn.ReLU(),
+    #                            torch.nn.Conv2d( 8, 8, kernel_size=(3,3), padding=1),
+    #                            torch.nn.ReLU(),
+    #                            torch.nn.Conv2d( 8, 8, kernel_size=(3,3), padding=1),
+    #                            torch.nn.ReLU(),
+    #                            torch.nn.Conv2d( 8, 8, kernel_size=(3,3), padding=1),
+    #                            torch.nn.ReLU(),
+    #                            torch.nn.Conv2d( 8, 1, kernel_size=(3,3), padding=1)                                                                
+    #                            )
+    ## DONT CHANGE Model 3, 20 epochs got to ~350 MSE batch size of 4, #num channels is 8, kernel sizes -5-3-3-3
+    model = torch.nn.Sequential(torch.nn.Conv2d( 1, 8, kernel_size=(5,5), padding=2),
+                                torch.nn.ReLU(),
+                                torch.nn.Conv2d( 8, 8, kernel_size=(3,3), padding=1),
+                                torch.nn.ReLU(),
+                                torch.nn.Conv2d( 8, 8, kernel_size=(3,3), padding=1),
+                                torch.nn.ReLU(),
+                                torch.nn.Conv2d( 8, 8, kernel_size=(3,3), padding=1),
+                                torch.nn.ReLU(),
+                                torch.nn.Conv2d( 8, 1, kernel_size=(3,3), padding=1)                                                                
+                                )
     
     #model = torch.nn.Sequential(torch.nn.Conv2d(1, 1, kernel_size=(5,5)), padding=2)
 
@@ -143,11 +194,11 @@ def main():
 
     learning_rate = 1e-7
 
-    weight_decay  = 1e-3
-    epochs        = 15  
+    weight_decay  = 1e-9
+    epochs        = 15
 
     #optimizer     = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9, weight_decay=weight_decay)
-    optimizer     = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.5, weight_decay=weight_decay)    
+    optimizer     = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9, weight_decay=weight_decay)    
     
     ## ************ End of your code ********************   ##
 
